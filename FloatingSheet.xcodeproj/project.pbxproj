@@ -8,17 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		5B9D8C472C53964F004BDA83 /* FloatingSheetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C462C53964F004BDA83 /* FloatingSheetApp.swift */; };
-		5B9D8C492C53964F004BDA83 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C482C53964F004BDA83 /* ContentView.swift */; };
 		5B9D8C4B2C539651004BDA83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B9D8C4A2C539651004BDA83 /* Assets.xcassets */; };
 		5B9D8C4E2C539651004BDA83 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B9D8C4D2C539651004BDA83 /* Preview Assets.xcassets */; };
+		5B9D8C562C539689004BDA83 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5B9D8C552C539689004BDA83 /* SnapKit */; };
+		5B9D8C582C5396A7004BDA83 /* ContentViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C572C5396A7004BDA83 /* ContentViewSheet.swift */; };
+		5B9D8C5A2C5396BD004BDA83 /* BottomSheetVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C592C5396BD004BDA83 /* BottomSheetVM.swift */; };
+		5B9D8C5C2C5396DB004BDA83 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C5B2C5396DB004BDA83 /* Extension.swift */; };
+		5B9D8C5E2C5396F6004BDA83 /* ScrollViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9D8C5D2C5396F6004BDA83 /* ScrollViewWrapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5B9D8C432C53964F004BDA83 /* FloatingSheet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingSheet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9D8C462C53964F004BDA83 /* FloatingSheetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingSheetApp.swift; sourceTree = "<group>"; };
-		5B9D8C482C53964F004BDA83 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5B9D8C4A2C539651004BDA83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B9D8C4D2C539651004BDA83 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5B9D8C572C5396A7004BDA83 /* ContentViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewSheet.swift; sourceTree = "<group>"; };
+		5B9D8C592C5396BD004BDA83 /* BottomSheetVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetVM.swift; sourceTree = "<group>"; };
+		5B9D8C5B2C5396DB004BDA83 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		5B9D8C5D2C5396F6004BDA83 /* ScrollViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewWrapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B9D8C562C539689004BDA83 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,6 +43,7 @@
 		5B9D8C3A2C53964F004BDA83 = {
 			isa = PBXGroup;
 			children = (
+				5B9D8C462C53964F004BDA83 /* FloatingSheetApp.swift */,
 				5B9D8C452C53964F004BDA83 /* FloatingSheet */,
 				5B9D8C442C53964F004BDA83 /* Products */,
 			);
@@ -51,10 +60,12 @@
 		5B9D8C452C53964F004BDA83 /* FloatingSheet */ = {
 			isa = PBXGroup;
 			children = (
-				5B9D8C462C53964F004BDA83 /* FloatingSheetApp.swift */,
-				5B9D8C482C53964F004BDA83 /* ContentView.swift */,
+				5B9D8C572C5396A7004BDA83 /* ContentViewSheet.swift */,
+				5B9D8C592C5396BD004BDA83 /* BottomSheetVM.swift */,
+				5B9D8C5B2C5396DB004BDA83 /* Extension.swift */,
 				5B9D8C4A2C539651004BDA83 /* Assets.xcassets */,
 				5B9D8C4C2C539651004BDA83 /* Preview Content */,
+				5B9D8C5D2C5396F6004BDA83 /* ScrollViewWrapper.swift */,
 			);
 			path = FloatingSheet;
 			sourceTree = "<group>";
@@ -83,6 +94,9 @@
 			dependencies = (
 			);
 			name = FloatingSheet;
+			packageProductDependencies = (
+				5B9D8C552C539689004BDA83 /* SnapKit */,
+			);
 			productName = FloatingSheet;
 			productReference = 5B9D8C432C53964F004BDA83 /* FloatingSheet.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +125,9 @@
 				Base,
 			);
 			mainGroup = 5B9D8C3A2C53964F004BDA83;
+			packageReferences = (
+				5B9D8C542C539689004BDA83 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 5B9D8C442C53964F004BDA83 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,8 +154,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B9D8C492C53964F004BDA83 /* ContentView.swift in Sources */,
+				5B9D8C582C5396A7004BDA83 /* ContentViewSheet.swift in Sources */,
 				5B9D8C472C53964F004BDA83 /* FloatingSheetApp.swift in Sources */,
+				5B9D8C5A2C5396BD004BDA83 /* BottomSheetVM.swift in Sources */,
+				5B9D8C5E2C5396F6004BDA83 /* ScrollViewWrapper.swift in Sources */,
+				5B9D8C5C2C5396DB004BDA83 /* Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +364,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5B9D8C542C539689004BDA83 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5B9D8C552C539689004BDA83 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B9D8C542C539689004BDA83 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5B9D8C3B2C53964F004BDA83 /* Project object */;
 }
