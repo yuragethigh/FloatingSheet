@@ -43,15 +43,7 @@ public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
     }
 
     public func updateUIView(_ uiView: UIScrollView, context: UIViewRepresentableContext<ScrollViewWrapper>) {
-//        DispatchQueue.main.async {
-//            uiView.contentOffset.y = vm.contentOffset
-//            print("Updating contentOffset: \(self.contentOffset)")
-//            if let hostedView = uiView.subviews.first {
-//                hostedView.frame = CGRect(origin: .zero, size: uiView.contentSize)
-//                print("Updated hostedView frame to: \(hostedView.frame)")
-//            }
-//            uiView.superview?.layoutIfNeeded() // Forces layout update if necessary
-//        }
+
     }
 
 
@@ -153,7 +145,7 @@ public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
         
         public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
             print(velocity)
-            let treshholdVelocity = 1.3
+            let thresholdVelocity = 1.3
             
             guard dragState == .drag else { return }
             
@@ -161,14 +153,14 @@ public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
                 targetContentOffset.pointee.y = 0
             }
             
-            if velocity.y > treshholdVelocity {
+            if velocity.y > thresholdVelocity {
                 print(velocity)
                 if vm.initialState == .small {
                     vm.initialState = .middle
                 } else if vm.initialState == .middle {
                     vm.initialState = .large
                 }
-            } else if velocity.y < -treshholdVelocity {
+            } else if velocity.y < -thresholdVelocity {
                 print(velocity)
                 if vm.initialState == .large {
                     vm.initialState = .middle
