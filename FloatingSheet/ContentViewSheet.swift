@@ -18,32 +18,33 @@ struct ContentViewSheet: View {
             
             
             ZStack(alignment: .bottom) {
-                Color.yellow
+                Color.purple
                 
                     
                 ScrollViewWrapper(
                     contentOffset: $contentOffset,
                     vm: vm
                 ) {
-                        LazyVStack {
-                            
-                            ForEach(1...100, id: \.self) { _ in
-                                
-                                Rectangle()
-                                    
-                                    .padding()
-                                
-                                
-                            }
-                        }
-                    }
-                    .frame(height: vm.getSizeY() + safeAreaB)
-                    .background(Color.blue)
-                    .cornerRadius(20)
-                    .animation(.spring(duration: 0.2), value: vm.getSizeY())
+                    Content()
+                }
+                .frame(height: vm.getSizeY() + safeAreaB)
+                .background(Color.blue)
+                .cornerRadius(20)
+                .animation(.spring(duration: 0.2), value: vm.getSizeY())
             }
         }
         .ignoresSafeArea(edges: .bottom)
+    }
+    
+    
+    @ViewBuilder
+    private func Content() -> some View {
+        LazyVStack {
+            ForEach(1...100, id: \.self) { _ in
+                Rectangle()
+                    .padding()
+            }
+        }
     }
 }
 
