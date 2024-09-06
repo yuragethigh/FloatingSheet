@@ -10,59 +10,93 @@ import SnapKit
 
 public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
     
-    @Binding var contentOffset: CGPoint
-    @ObservedObject var vm: BottomSheetVM
+    private let thresholds: [CGFloat]
+    private let proxy: GeometryProxy
+    @Binding var currentIndex: Int
+    @Binding var contentOffset: CGFloat
+    @Binding var updateContent: Bool
+    @Binding var headerRect: CGRect
     
     let content: () -> Content
     
-     init(
-        contentOffset: Binding<CGPoint>,
-        vm: BottomSheetVM,
+    init(
+        thresholds: [CGFloat],
+        proxy: GeometryProxy,
+        currentIndex: Binding<Int>,
+        contentOffset: Binding<CGFloat>,
+        updateContent: Binding<Bool>,
+        headerRect: Binding<CGRect>,
         @ViewBuilder _ content: @escaping () -> Content
     ) {
+        self.thresholds = thresholds
+        self.proxy = proxy
+        self._currentIndex = currentIndex
         self._contentOffset = contentOffset
-        self.vm = vm
+        self._updateContent = updateContent
+        self._headerRect = headerRect
         self.content = content
     }
     
     public func makeUIView(context: UIViewRepresentableContext<ScrollViewWrapper>) -> UIScrollView {
         let sv = UIScrollView()
         sv.backgroundColor = .clear
+        sv.alwaysBounceVertical = true
+        sv.showsVerticalScrollIndicator = false
         sv.delegate = context.coordinator
-        let controller = UIHostingController(rootView: content())
-        controller.view.backgroundColor = .clear
-        sv.addSubview(controller.view)
-
-        controller.view.snp.makeConstraints {
-            $0.bottom.leading.top.trailing.equalToSuperview()
-            $0.width.equalToSuperview()
-            
-        }
+        
+        layoutContent(sv)
 
         return sv
     }
 
-    public func updateUIView(_ uiView: UIScrollView, context: UIViewRepresentableContext<ScrollViewWrapper>) {
-
+    public func updateUIView(_ sv: UIScrollView, context: UIViewRepresentableContext<ScrollViewWrapper>) {
+        if updateContent {
+            layoutContent(sv)
+            updateContent = false
+        }
     }
-
-
+    
+    private func layoutContent(_ sv: UIScrollView) {
+        let controller = UIHostingController(rootView: content())
+        controller.view.backgroundColor = .clear
+        
+        sv.addSubview(controller.view)
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            controller.view.leadingAnchor.constraint(equalTo: sv.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: sv.trailingAnchor),
+            controller.view.topAnchor.constraint(equalTo: sv.topAnchor, constant: headerRect.height),
+            controller.view.bottomAnchor.constraint(equalTo: sv.bottomAnchor),
+            controller.view.widthAnchor.constraint(equalTo: sv.widthAnchor)
+        ])
+    }
     
     public func makeCoordinator() -> Coordinator {
-        Coordinator(contentOffset: self._contentOffset, vm: vm)
+        Coordinator(
+            thresholds: thresholds,
+            proxy: proxy,
+            currentIndex: $currentIndex,
+            contentOffset: $contentOffset
+        )
     }
     
-    public class Coordinator: NSObject, UIScrollViewDelegate {
-        
-        let contentOffset: Binding<CGPoint>
-        var vm: BottomSheetVM
+    public final class Coordinator: NSObject, UIScrollViewDelegate {
+        var height: CGFloat = 0.0
+        let thresholds: [CGFloat]
+        let proxy: GeometryProxy
+        @Binding var currentIndex: Int
+        @Binding var contentOffset: CGFloat
         
         init(
-            contentOffset: Binding<CGPoint>,
-            vm: BottomSheetVM
+            thresholds: [CGFloat],
+            proxy: GeometryProxy,
+            currentIndex: Binding<Int>,
+            contentOffset: Binding<CGFloat>
         ){
-            self.contentOffset = contentOffset
-            self.vm = vm
+            self.thresholds = thresholds
+            self.proxy = proxy
+            self._currentIndex = currentIndex
+            self._contentOffset = contentOffset
         }
         
         private enum DragState {
@@ -76,31 +110,27 @@ public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
         public func scrollViewDidScroll(_ scrollView: UIScrollView) {
             let yOffset = scrollView.contentOffset.y
             
-            let viewHeight = UIScreen.main.bounds.height - UIScreen.topSafeArea
-            
-//            print("# viewHeight     - ", viewHeight)
-//            print("# getsize Y      - ", vm.getSizeY())
-//            print("# State          - ", vm.initialState)
-//            print("# dragState      - ", dragState)
-//            print("# decelerate     - ", decelerate)
+            guard let viewHeight = thresholds.last else { return }
+            let getSizeY = thresholds[currentIndex] + contentOffset
+
             switch dragState {
             case .drag:
                 
-                if vm.getSizeY() >= viewHeight {
-                    vm.initialState = .large
-                    vm.contentOffset = 0
+                if getSizeY >= viewHeight {
+                    currentIndex = thresholds.count - 1
+                    contentOffset = 0
                     dragState = .scroll
                     scrollView.setContentOffset(CGPoint.zero, animated: false)
-                } else {
-                    vm.contentOffset += yOffset
-                    scrollView.contentOffset.y = 0
                    
+                } else {
+                    contentOffset += yOffset
+                    scrollView.contentOffset.y = 0
                 }
                 
             case .scroll:
                 
                 if yOffset < 0 {
-                    vm.contentOffset += yOffset
+                    contentOffset += yOffset
                     dragState = .drag
                     scrollView.contentOffset.y = 0
                 } else if decelerate {
@@ -111,69 +141,49 @@ public struct ScrollViewWrapper<Content: View>: UIViewRepresentable {
                 decelerate = false
                 if yOffset == 0 {
                     self.dragState = .scroll
-                   
                 }
             }
             
         }
         
         private func switchSize(_ scrollView: UIScrollView) {
-            let height = UIScreen.main.bounds.height - UIScreen.topSafeArea
-            let currentY = vm.getSizeY()
-            print(vm.initialState)
+            let currentY = thresholds[currentIndex] + contentOffset
             
-            if currentY <= height * 0.35 {
-                vm.contentOffset = 0
-                vm.initialState = .small
-                
-            } else if currentY <= height * 0.8 {
-                vm.contentOffset = 0
-                vm.initialState = .middle
-            } else {
-                vm.contentOffset = 0
-                vm.initialState = .large
-            }
+            let nearestIndex = thresholds.enumerated().min(by: { abs($0.element - currentY) < abs($1.element - currentY) })?.offset ?? currentIndex
+            
+            contentOffset = 0
+            currentIndex = nearestIndex
         }
         
         public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
             switchSize(scrollView)
             if dragState != .bounce {
                 self.decelerate = decelerate
-                
             }
         }
         
         public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-            print(velocity)
+            
             let thresholdVelocity = 1.3
             
-            guard dragState == .drag else { return }
+            guard dragState == .drag else {
+                return
+            }
             
-            if vm.initialState != .large {
+            if currentIndex != thresholds.count - 1 {
                 targetContentOffset.pointee.y = 0
             }
             
             if velocity.y > thresholdVelocity {
-                print(velocity)
-                if vm.initialState == .small {
-                    vm.initialState = .middle
-                } else if vm.initialState == .middle {
-                    vm.initialState = .large
-                }
+                currentIndex += 1
             } else if velocity.y < -thresholdVelocity {
-                print(velocity)
-                if vm.initialState == .large {
-                    vm.initialState = .middle
-                } else if vm.initialState == .middle {
-                    vm.initialState = .small
-                }
+                currentIndex -= 1
             }
-            
         }
     }
 }
 
 #Preview{
-    ContentViewSheet()
+    MainView()
 }
 

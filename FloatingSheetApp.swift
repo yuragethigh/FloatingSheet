@@ -11,7 +11,7 @@ import SwiftUI
 struct FloatingSheetApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentViewSheet()
+            MainView()
         }
     }
 }
